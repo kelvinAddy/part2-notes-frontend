@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Note from "./components/Note.jsx";
+import noteService from "./services/notes.js";
 
 const App = () => {
   const [notesArr, setNotesArr] = useState([]);
@@ -8,32 +8,48 @@ const App = () => {
   const [showAll, setShowAll] = useState(true);
 
   useEffect(() => {
-    console.log("effect");
-    axios.get("http://localhost:3001/notes").then((response) => {
-      console.log("promise fullfilled");
-      setNotesArr(response.data);
-    });
+    (async () => {
+      const data = await noteService.getAll();
+      setNotesArr(data);
+    })();
   }, []);
-  console.log("render", notesArr.length, "notes");
 
   const handleNoteChange = (e) => {
     setNewNote(e.target.value);
   };
+
   const addNote = (e) => {
     e.preventDefault();
     const noteObject = {
       content: newNote,
       important: Math.random() < 0.5,
-      id: String(notesArr.length + 1),
     };
-
-    setNotesArr([...notesArr, noteObject]);
-    setNewNote("");
+    (async () => {
+      const data = await noteService.create(noteObject);
+      setNotesArr([...notesArr, data]);
+      setNewNote("");
+    })();
   };
 
   const notesToShow = showAll
     ? notesArr
     : notesArr.filter((note) => note.important);
+
+  const toggleImportance = (id) => {
+    const note = notesArr.find((n) => n.id === id);
+    const changedNote = { ...note, important: !note.important };
+
+    (async () => {
+      try {
+        const data = await noteService.update(id, changedNote);
+        setNotesArr(notesArr.map((note) => (note.id === id ? data : note)));
+      } catch (e) {
+        alert(`${e} occured`);
+        setNotesArr(notesArr.filter((note) => note.id !== id));
+      }
+    })();
+  };
+
   return (
     <div>
       <h1>Notes</h1>
@@ -44,7 +60,7 @@ const App = () => {
       </div>
       <ul>
         {notesToShow.map((note) => (
-          <Note note={note} key={note.id} />
+          <Note note={note} key={note.id} toggleImportance={toggleImportance} />
         ))}
       </ul>
       <form onSubmit={addNote}>
