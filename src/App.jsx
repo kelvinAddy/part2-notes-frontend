@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import Note from "./components/Note.jsx";
 import noteService from "./services/notes.js";
+import Notification from "./components/Notification.jsx";
 
 const App = () => {
   const [notesArr, setNotesArr] = useState([]);
   const [newNote, setNewNote] = useState("I am a new note");
   const [showAll, setShowAll] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -31,9 +33,7 @@ const App = () => {
     })();
   };
 
-  const notesToShow = showAll
-    ? notesArr
-    : notesArr.filter((note) => note.important);
+  const notesToShow = showAll ? notesArr : notesArr.filter((note) => note.important);
 
   const toggleImportance = (id) => {
     const note = notesArr.find((n) => n.id === id);
@@ -44,7 +44,10 @@ const App = () => {
         const data = await noteService.update(id, changedNote);
         setNotesArr(notesArr.map((note) => (note.id === id ? data : note)));
       } catch (e) {
-        alert(`${e} occured`);
+        setErrorMessage(`'${changedNote.content}' was already removed from the server`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
         setNotesArr(notesArr.filter((note) => note.id !== id));
       }
     })();
@@ -53,10 +56,9 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
+      <Notification message={errorMessage} />
       <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          Show {showAll ? "important" : "all"}
-        </button>
+        <button onClick={() => setShowAll(!showAll)}>Show {showAll ? "important" : "all"}</button>
       </div>
       <ul>
         {notesToShow.map((note) => (

@@ -3,7 +3,7 @@
     {
       "id": "1",
       "content": "HTML is easy",
-      "important": true
+      "important": false
     },
     {
       "id": "2",
@@ -17,12 +17,12 @@
     },
     {
       "content": "xerus the nexus",
-      "important": true,
+      "important": false,
       "id": "0SPUpdQycrY"
     },
     {
       "content": "I am a new note",
-      "important": true,
+      "important": false,
       "id": "w-WoT6aHSBQ"
     },
     {
@@ -37,7 +37,7 @@
     },
     {
       "content": "jonas is a fraud",
-      "important": true,
+      "important": false,
       "id": "et0qVVE832M"
     },
     {
@@ -117,18 +117,23 @@
     },
     {
       "content": "",
-      "important": true,
+      "important": false,
       "id": "XCGLL7YGS9A"
     },
     {
       "content": "xerus is the dexter",
-      "important": true,
+      "important": false,
       "id": "dx6hcn5FZ-4"
     },
     {
       "content": "jonas is king",
       "important": false,
       "id": "7BI0fa1IXJo"
+    },
+    {
+      "content": "I am a new note",
+      "important": false,
+      "id": "QLU72MLDKQg"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
