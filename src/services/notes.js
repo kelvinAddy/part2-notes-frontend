@@ -4,12 +4,7 @@ const baseUrl = "/api/notes";
 
 const getAll = async () => {
   const response = await axios.get(baseUrl);
-  const nonExisting = {
-    id: 1000,
-    content: "This note does not exist",
-    important: true,
-  };
-  return (await response.data).concat(nonExisting);
+  return await response.data;
 };
 
 const create = async (newObject) => {
