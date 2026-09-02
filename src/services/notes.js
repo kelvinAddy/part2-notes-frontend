@@ -18,8 +18,14 @@ const update = async (id, newObject) => {
   return response.data;
 };
 
+const remove = async (id) => {
+  const newUrl = `${baseUrl}/${id}`;
+  axios.delete(newUrl);
+};
+
 export default {
   getAll,
   create,
   update,
+  remove,
 };

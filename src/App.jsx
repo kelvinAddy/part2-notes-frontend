@@ -54,6 +54,23 @@ const App = () => {
     })();
   };
 
+  const deleteNote = (id) => {
+    if (window.confirm(`Are you sure you want to delete this note`)) {
+      (async () => {
+        try {
+          noteService.remove(id);
+          setNotesArr(notesArr.filter((note) => note.id !== id));
+        } catch (err) {
+          setErrorMessage(`An error was encountered ${err}`);
+          setNotesArr(notesArr.filter((note) => note.id !== id));
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        }
+      })();
+    }
+  };
+
   return (
     <div>
       <h1>Notes</h1>
@@ -63,7 +80,7 @@ const App = () => {
       </div>
       <ul>
         {notesToShow.map((note) => (
-          <Note note={note} key={note.id} toggleImportance={toggleImportance} />
+          <Note note={note} key={note.id} toggleImportance={toggleImportance} deleteNote={deleteNote} />
         ))}
       </ul>
       <form onSubmit={addNote}>
