@@ -1,92 +1,60 @@
-import { useState, useEffect } from "react";
-import Note from "./components/Note.jsx";
-import noteService from "./services/notes.js";
-import Notification from "./components/Notification.jsx";
-import Footer from "./components/Footer.jsx";
+import { useState, useEffect } from 'react';
+import noteService from './services/notes.js';
+import Notification from './components/Notification.jsx';
+import Footer from './components/Footer.jsx';
+import LoginForm from './components/LoginForm.jsx';
+import NoteForm from './components/NoteForm.jsx';
+import DisplayNotes from './components/DisplayNotes.jsx';
 
 const App = () => {
   const [notesArr, setNotesArr] = useState([]);
-  const [newNote, setNewNote] = useState("I am a new note");
-  const [showAll, setShowAll] = useState(true);
+
   const [errorMessage, setErrorMessage] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const updateNotification = (updater) => {
+    updater();
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
+  };
 
   useEffect(() => {
-    (async () => {
-      const data = await noteService.getAll();
-      setNotesArr(data);
-    })();
+    noteService.getAll().then((data) => setNotesArr(data));
   }, []);
 
-  const handleNoteChange = (e) => {
-    setNewNote(e.target.value);
-  };
-
-  const addNote = (e) => {
-    e.preventDefault();
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
-    };
-    (async () => {
-      const data = await noteService.create(noteObject);
-      setNotesArr([...notesArr, data]);
-      setNewNote("");
-    })();
-  };
-
-  const notesToShow = showAll ? notesArr : notesArr.filter((note) => note.important);
-
-  const toggleImportance = (id) => {
-    const note = notesArr.find((n) => n.id === id);
-    const changedNote = { ...note, important: !note.important };
-
-    (async () => {
-      try {
-        const data = await noteService.update(id, changedNote);
-        setNotesArr(notesArr.map((note) => (note.id === id ? data : note)));
-      } catch (e) {
-        setErrorMessage(`'${changedNote.content}' was already removed from the server`);
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 5000);
-        setNotesArr(notesArr.filter((note) => note.id !== id));
-      }
-    })();
-  };
-
-  const deleteNote = (id) => {
-    if (window.confirm(`Are you sure you want to delete this note`)) {
-      (async () => {
-        try {
-          noteService.remove(id);
-          setNotesArr(notesArr.filter((note) => note.id !== id));
-        } catch (err) {
-          setErrorMessage(`An error was encountered ${err}`);
-          setNotesArr(notesArr.filter((note) => note.id !== id));
-          setTimeout(() => {
-            setErrorMessage(null);
-          }, 5000);
-        }
-      })();
+  useEffect(() => {
+    const loggedInUser = window.localStorage.getItem('loggedInUser');
+    if (loggedInUser) {
+      const user = JSON.parse(loggedInUser);
+      setUser(user);
+      noteService.setToken(user.token);
     }
-  };
+  }, []);
 
   return (
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
-      <div>
-        <button onClick={() => setShowAll(!showAll)}>Show {showAll ? "important" : "all"}</button>
-      </div>
-      <ul>
-        {notesToShow.map((note) => (
-          <Note note={note} key={note.id} toggleImportance={toggleImportance} deleteNote={deleteNote} />
-        ))}
-      </ul>
-      <form onSubmit={addNote}>
-        <input value={newNote} onChange={handleNoteChange} />
-        <button type="submit">Save</button>
-      </form>
+      {!user && (
+        <LoginForm
+          setErrorMessage={setErrorMessage}
+          updateNotification={updateNotification}
+          setUser={setUser}
+        />
+      )}
+      {user && (
+        <>
+          <DisplayNotes
+            updateNotification={updateNotification}
+            setErrorMessage={setErrorMessage}
+            setNotesArr={setNotesArr}
+            notesArr={notesArr}
+          />
+          <NoteForm />
+        </>
+      )}
+
       <Footer />
     </div>
   );
