@@ -36,22 +36,11 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       <Notification message={errorMessage} />
-      {!user && (
-        <LoginForm
-          setErrorMessage={setErrorMessage}
-          updateNotification={updateNotification}
-          setUser={setUser}
-        />
-      )}
+      {!user && <LoginForm setErrorMessage={setErrorMessage} updateNotification={updateNotification} setUser={setUser} />}
       {user && (
         <>
-          <DisplayNotes
-            updateNotification={updateNotification}
-            setErrorMessage={setErrorMessage}
-            setNotesArr={setNotesArr}
-            notesArr={notesArr}
-          />
-          <NoteForm />
+          <DisplayNotes updateNotification={updateNotification} setErrorMessage={setErrorMessage} setNotesArr={setNotesArr} notesArr={notesArr} />
+          <NoteForm updateNotification={updateNotification} setErrorMessage={setErrorMessage} />
         </>
       )}
 

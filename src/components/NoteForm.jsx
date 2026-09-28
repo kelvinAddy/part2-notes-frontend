@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import noteService from '../services/notes';
 
-const NoteForm = () => {
+const NoteForm = ({ setErrorMessage, updateNotification }) => {
   const [newNote, setNewNote] = useState('');
 
   const addNote = async (e) => {
@@ -15,6 +16,7 @@ const NoteForm = () => {
       setNotesArr([...notesArr, data]);
       setNewNote('');
     } catch (e) {
+      console.log(e);
       updateNotification(() => {
         setErrorMessage(e.response.data.error);
       });
@@ -22,7 +24,7 @@ const NoteForm = () => {
   };
   return (
     <form onSubmit={addNote}>
-      <input value={newNote} onChange={({ target }) => target.value} />
+      <input value={newNote} onChange={({ target }) => setNewNote(target.value)} />
       <button type="submit">Save</button>
     </form>
   );
