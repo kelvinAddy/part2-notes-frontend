@@ -1,20 +1,17 @@
-import { useState } from 'react';
 import loginService from '../services/login';
 import noteService from '../services/notes';
 
 const LoginForm = ({ setErrorMessage, updateNotification, setUser }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async (formData) => {
+    const user = {
+      username: formData.get('username'),
+      password: formData.get('password'),
+    };
     try {
-      const user = await loginService.login({ username, password });
-      window.localStorage.setItem('loggedInUser', JSON.stringify(user));
-      noteService.setToken(user.token);
-      setUser(user);
-      setPassword('');
-      setUsername('');
+      const data = await loginService.login(user);
+      window.localStorage.setItem('loggedInUser', JSON.stringify(data));
+      noteService.setToken(data.token);
+      setUser(data);
     } catch (error) {
       updateNotification(() => {
         setErrorMessage(error.response.data.error);
@@ -25,25 +22,17 @@ const LoginForm = ({ setErrorMessage, updateNotification, setUser }) => {
   return (
     <>
       <h2>Login</h2>
-      <form onSubmit={handleLogin}>
+      <form action={handleLogin}>
         <div>
           <label>
             Username :
-            <input
-              value={username}
-              type="text"
-              onChange={({ target }) => setUsername(target.value)}
-            />
+            <input name="username" type="text" />
           </label>
         </div>
         <div>
           <label>
-            Paswword :
-            <input
-              value={password}
-              type="text"
-              onChange={({ target }) => setPassword(target.value)}
-            />
+            Password :
+            <input name="password" type="text" />
           </label>
         </div>
         <button type="submit">Login</button>
