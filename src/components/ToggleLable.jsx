@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useImperativeHandle } from 'react';
 const ToggleLable = (props) => {
   const [visible, setVisible] = useState(false);
 
@@ -8,6 +8,10 @@ const ToggleLable = (props) => {
   const toggleVisibility = () => {
     setVisible(!visible);
   };
+
+  useImperativeHandle(props.ref, () => {
+    return { toggleVisibility };
+  });
 
   return (
     <div>

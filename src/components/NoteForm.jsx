@@ -1,30 +1,32 @@
-import { useState } from 'react';
 import noteService from '../services/notes';
 
-const NoteForm = ({ setErrorMessage, updateNotification }) => {
-  const [newNote, setNewNote] = useState('');
-
-  const addNote = async (e) => {
-    e.preventDefault();
+const NoteForm = ({
+  setErrorMessage,
+  updateNotification,
+  setNotesArr,
+  notesArr,
+  noteFormRef,
+}) => {
+  const addNote = async (formData) => {
     const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
+      content: formData.get('note'),
+      important: true,
     };
 
     try {
+      noteFormRef.current.toggleVisibility();
       const data = await noteService.create(noteObject);
       setNotesArr([...notesArr, data]);
-      setNewNote('');
     } catch (e) {
-      console.log(e);
       updateNotification(() => {
+        console.log(e);
         setErrorMessage(e.response.data.error);
       });
     }
   };
   return (
-    <form onSubmit={addNote}>
-      <input value={newNote} onChange={({ target }) => setNewNote(target.value)} />
+    <form action={addNote}>
+      <input name="note" type="text" />
       <button type="submit">Save</button>
     </form>
   );

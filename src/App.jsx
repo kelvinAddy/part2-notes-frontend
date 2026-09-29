@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import noteService from './services/notes.js';
 import Notification from './components/Notification.jsx';
 import Footer from './components/Footer.jsx';
@@ -11,6 +11,7 @@ const App = () => {
   const [notesArr, setNotesArr] = useState([]);
   const [errorMessage, setErrorMessage] = useState(null);
   const [user, setUser] = useState(null);
+  const noteFormRef = useRef();
 
   const updateNotification = (updater) => {
     updater();
@@ -52,10 +53,13 @@ const App = () => {
         notesArr={notesArr}
       />
       {user && (
-        <ToggleLable buttonLabel="new note">
+        <ToggleLable buttonLabel="new note" ref={noteFormRef}>
           <NoteForm
             updateNotification={updateNotification}
             setErrorMessage={setErrorMessage}
+            setNotesArr={setNotesArr}
+            notesArr={notesArr}
+            noteFormRef={noteFormRef}
           />
         </ToggleLable>
       )}
