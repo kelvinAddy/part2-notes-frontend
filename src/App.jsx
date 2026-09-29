@@ -60,6 +60,7 @@ const App = () => {
             setNotesArr={setNotesArr}
             notesArr={notesArr}
             noteFormRef={noteFormRef}
+            setUser={setUser}
           />
         </ToggleLable>
       )}

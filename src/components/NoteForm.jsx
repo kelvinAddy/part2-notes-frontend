@@ -6,6 +6,7 @@ const NoteForm = ({
   setNotesArr,
   notesArr,
   noteFormRef,
+  setUser,
 }) => {
   const addNote = async (formData) => {
     const noteObject = {
@@ -19,9 +20,12 @@ const NoteForm = ({
       setNotesArr([...notesArr, data]);
     } catch (e) {
       updateNotification(() => {
-        console.log(e);
         setErrorMessage(e.response.data.error);
       });
+      if (e.response.data.error.includes('token expired')) {
+        setUser(null);
+        window.localStorage.clear();
+      }
     }
   };
   return (
