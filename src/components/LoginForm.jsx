@@ -1,23 +1,12 @@
-import loginService from '../services/login';
-import noteService from '../services/notes';
-
-const LoginForm = ({ setErrorMessage, updateNotification, setUser }) => {
+const LoginForm = ({ logUserIn }) => {
   const handleLogin = async (formData) => {
-    const user = {
+    const userObj = {
       username: formData.get('username'),
       password: formData.get('password'),
-    };
-    try {
-      const data = await loginService.login(user);
-      window.localStorage.setItem('loggedInUser', JSON.stringify(data));
-      noteService.setToken(data.token);
-      setUser(data);
-    } catch (error) {
-      updateNotification(() => {
-        setErrorMessage(error.response.data.error);
-      });
     }
-  };
+    logUserIn(userObj)
+
+  }
 
   return (
     <>
@@ -38,7 +27,7 @@ const LoginForm = ({ setErrorMessage, updateNotification, setUser }) => {
         <button type="submit">Login</button>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm
